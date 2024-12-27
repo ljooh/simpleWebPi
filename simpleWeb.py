@@ -121,15 +121,17 @@ def delay():
 
 # WebAPI : 파일 업로드
 # curl -X POST -F "file=@simpleWebPython.zip" http://localhost:7070/upload
-@app.route("/upload", methods=["POST"])
+@app.route("/upload", methods=["GET","POST"])
 def upload():
-    file = request.files['file']
-    if file:
-        filename = os.path.join(DATA_FILE_PATH,file.filename)
-        file.save(filename)
-        return "File uploaded successfully"
-    
-    return "File not found"
+    if request.method == "GET":
+        return render_template("upload.html")
+    else:
+        file = request.files['file']
+        if file:
+            filename = os.path.join(DATA_FILE_PATH,file.filename)
+            file.save(filename)
+            return redirect(url_for("showfiles"))
+        return "File not found"
 
 # WebAPI : 파일 목록 출력
 # curl http://localhost:7070/files
